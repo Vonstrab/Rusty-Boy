@@ -1,0 +1,6 @@
+[package]
+name = "Rusty-Boy"
+version = "0.1.0"
+authors = ["ivan.delgado@etu.upmc.fr <delgado.ivan@protonmail.com>"]
+
+[dependencies]
