@@ -118,24 +118,23 @@ mod tests {
         assert_eq!(reg.get_af(), 0xAABB);
         assert_eq!(reg.a, 0xAA);
         assert_eq!(reg.f, 0xBB);
-        
+
         reg.set_bc(0x1122);
 
         assert_eq!(reg.get_bc(), 0x1122);
         assert_eq!(reg.b, 0x11);
         assert_eq!(reg.c, 0x22);
-        
+
         reg.set_de(0x3344);
 
         assert_eq!(reg.get_de(), 0x3344);
         assert_eq!(reg.d, 0x33);
         assert_eq!(reg.e, 0x44);
-        
+
         reg.set_hl(0x5566);
 
         assert_eq!(reg.get_hl(), 0x5566);
         assert_eq!(reg.h, 0x55);
         assert_eq!(reg.l, 0x66);
-        
     }
 }
