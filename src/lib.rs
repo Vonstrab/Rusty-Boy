@@ -2,3 +2,4 @@
 
 mod register;
 mod cpu;
+mod memory;

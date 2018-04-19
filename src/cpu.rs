@@ -1,7 +1,9 @@
 use register::*;
+use memory::*;
 
 pub struct Cpu {
     pub reg: Register,
+    pub mem: Memory,
     pub clock: u64,
 }
 
@@ -9,8 +11,13 @@ impl Cpu {
     pub fn new() -> Cpu {
         Cpu {
             reg: Register::new(),
+            mem: Memory::new(),
             clock: 0,
         }
+    }
+
+    pub fn nop(&mut self) {
+        self.clock += 4;
     }
 
     pub fn ldb(&mut self, n: u8) {
