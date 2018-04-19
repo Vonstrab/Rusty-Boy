@@ -105,6 +105,58 @@ impl Register {
         }
         return false;
     }
+
+    fn is_c_set(&self) -> bool {
+        if ((CpuFlag::C as u8) & self.f != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    fn is_h_set(&self) -> bool {
+        if ((CpuFlag::H as u8) & self.f != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    fn is_n_set(&self) -> bool {
+        if ((CpuFlag::N as u8) & self.f != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    fn is_z_set(&self) -> bool {
+        if ((CpuFlag::Z as u8) & self.f != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    fn set_c_flag(&mut self) {
+        if (!self.is_c_set()) {
+            self.f = (CpuFlag::C as u8) | self.f;
+        }
+    }
+
+    fn set_h_flag(&mut self) {
+        if (!self.is_h_set()) {
+            self.f = (CpuFlag::H as u8) | self.f;
+        }
+    }
+
+    fn set_n_flag(&mut self) {
+        if (!self.is_n_set()) {
+            self.f = (CpuFlag::N as u8) | self.f;
+        }
+    }
+
+    fn set_z_flag(&mut self) {
+        if (!self.is_z_set()) {
+            self.f = (CpuFlag::Z as u8) | self.f;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -162,19 +214,59 @@ mod tests {
         let mut reg = Register::new();
         assert!(!reg.is_flag_set());
 
-        reg.f = 0b10000000;
+        reg.f = CpuFlag::C as u8;
         assert!(reg.is_flag_set());
 
-        reg.f = 0b01000000;
+        reg.f = CpuFlag::H as u8;
         assert!(reg.is_flag_set());
 
-        reg.f = 0b00100000;
+        reg.f = CpuFlag::N as u8;
         assert!(reg.is_flag_set());
 
-        reg.f = 0b00010000;
+        reg.f = CpuFlag::Z as u8;
         assert!(reg.is_flag_set());
 
         reg.f = 0b10100000;
         assert!(reg.is_flag_set());
+    }
+
+    #[test]
+    fn test_c_flag() {
+        let mut reg = Register::new();
+        assert!(!reg.is_c_set());
+
+        reg.set_c_flag();
+
+        assert!(reg.is_c_set());
+    }
+
+    #[test]
+    fn test_h_flag() {
+        let mut reg = Register::new();
+        assert!(!reg.is_h_set());
+
+        reg.set_h_flag();
+
+        assert!(reg.is_h_set());
+    }
+
+    #[test]
+    fn test_n_flag() {
+        let mut reg = Register::new();
+        assert!(!reg.is_n_set());
+
+        reg.set_n_flag();
+
+        assert!(reg.is_n_set());
+    }
+
+    #[test]
+    fn test_z_flag() {
+        let mut reg = Register::new();
+        assert!(!reg.is_z_set());
+
+        reg.set_z_flag();
+
+        assert!(reg.is_z_set());
     }
 }
