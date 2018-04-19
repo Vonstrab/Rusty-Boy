@@ -86,6 +86,25 @@ impl Register {
         self.h = (hl_value >> 8) as u8;;
         self.l = (hl_value) as u8;
     }
+
+    pub fn is_flag_set(&self) -> bool {
+        if (self.f == 0) {
+            return false;
+        }
+        if ((CpuFlag::C as u8) & self.f != 0) {
+            return true;
+        }
+        if ((CpuFlag::N as u8) & self.f != 0) {
+            return true;
+        }
+        if ((CpuFlag::H as u8) & self.f != 0) {
+            return true;
+        }
+        if ((CpuFlag::Z as u8) & self.f != 0) {
+            return true;
+        }
+        return false;
+    }
 }
 
 #[cfg(test)]
@@ -136,5 +155,26 @@ mod tests {
         assert_eq!(reg.get_hl(), 0x5566);
         assert_eq!(reg.h, 0x55);
         assert_eq!(reg.l, 0x66);
+    }
+
+    #[test]
+    fn test_flag() {
+        let mut reg = Register::new();
+        assert!(!reg.is_flag_set());
+
+        reg.f = 0b10000000;
+        assert!(reg.is_flag_set());
+
+        reg.f = 0b01000000;
+        assert!(reg.is_flag_set());
+
+        reg.f = 0b00100000;
+        assert!(reg.is_flag_set());
+
+        reg.f = 0b00010000;
+        assert!(reg.is_flag_set());
+
+        reg.f = 0b10100000;
+        assert!(reg.is_flag_set());
     }
 }
