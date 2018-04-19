@@ -110,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn test_seter() {
+    fn test_setter() {
         let mut reg = Register::new();
 
         reg.set_af(0xAABB);

@@ -55,4 +55,45 @@ mod tests {
         assert_eq!(cpu.reg.b, 0x78);
         assert_eq!(cpu.clock, 8);
     }
+
+    #[test]
+    fn test_ldc() {
+        let mut cpu = Cpu::new();
+        cpu.ldc(0x78);
+        assert_eq!(cpu.reg.c, 0x78);
+        assert_eq!(cpu.clock, 8);
+    }
+
+    #[test]
+    fn test_ldd() {
+        let mut cpu = Cpu::new();
+        cpu.ldd(0x78);
+        assert_eq!(cpu.reg.d, 0x78);
+        assert_eq!(cpu.clock, 8);
+    }
+
+    #[test]
+    fn test_lde() {
+        let mut cpu = Cpu::new();
+        cpu.lde(0x78);
+        assert_eq!(cpu.reg.e, 0x78);
+        assert_eq!(cpu.clock, 8);
+    }
+
+    #[test]
+    fn test_ldh() {
+        let mut cpu = Cpu::new();
+        cpu.ldh(0x78);
+        assert_eq!(cpu.reg.h, 0x78);
+        assert_eq!(cpu.clock, 8);
+    }
+
+    #[test]
+    fn test_ldl() {
+        let mut cpu = Cpu::new();
+        cpu.ldl(0x78);
+        assert_eq!(cpu.reg.l, 0x78);
+        assert_eq!(cpu.clock, 8);
+    }
+
 }
