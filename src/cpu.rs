@@ -1,5 +1,5 @@
-use register::*;
 use memory::*;
+use register::*;
 
 pub struct Cpu {
     pub reg: Register,
