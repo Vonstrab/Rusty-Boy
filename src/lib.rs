@@ -1,5 +1,5 @@
-#![crate_type = "lib" ]
+#![crate_type = "lib"]
 
-mod register;
-mod cpu;
+mod emulator;
 mod memory;
+mod register;
