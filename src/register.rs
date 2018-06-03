@@ -157,6 +157,30 @@ impl Register {
             self.f = (CpuFlag::Z as u8) | self.f;
         }
     }
+
+    fn unset_c_flag(&mut self) {
+        if self.is_c_set() {
+            self.f = (CpuFlag::C as u8) ^ self.f;
+        }
+    }
+
+    fn unset_h_flag(&mut self) {
+        if self.is_h_set() {
+            self.f = (CpuFlag::H as u8) ^ self.f;
+        }
+    }
+
+    fn unset_n_flag(&mut self) {
+        if self.is_n_set() {
+            self.f = (CpuFlag::N as u8) ^ self.f;
+        }
+    }
+
+    fn unset_z_flag(&mut self) {
+        if self.is_z_set() {
+            self.f = (CpuFlag::Z as u8) ^ self.f;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -228,6 +252,8 @@ mod tests {
 
         reg.f = 0b10100000;
         assert!(reg.is_flag_set());
+        assert!(reg.is_z_set());
+        assert!(reg.is_h_set());
     }
 
     #[test]
@@ -238,6 +264,10 @@ mod tests {
         reg.set_c_flag();
 
         assert!(reg.is_c_set());
+
+        reg.unset_c_flag();
+
+        assert!(!reg.is_c_set());
     }
 
     #[test]
@@ -248,6 +278,10 @@ mod tests {
         reg.set_h_flag();
 
         assert!(reg.is_h_set());
+
+        reg.unset_h_flag();
+
+        assert!(!reg.is_h_set());
     }
 
     #[test]
@@ -258,6 +292,10 @@ mod tests {
         reg.set_n_flag();
 
         assert!(reg.is_n_set());
+
+        reg.unset_n_flag();
+
+        assert!(!reg.is_n_set());
     }
 
     #[test]
@@ -268,5 +306,9 @@ mod tests {
         reg.set_z_flag();
 
         assert!(reg.is_z_set());
+
+        reg.unset_z_flag();
+
+        assert!(!reg.is_z_set());
     }
 }

@@ -54,7 +54,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn testGetSet() {
+    fn test_get_set() {
         let mut mem = Memory::new();
         mem.set_value8bit(0x9000, 0xAB);
         assert_eq!(mem.get_value8bit(0x9000), 0xAB);
