@@ -1,5 +1,5 @@
 #![crate_type = "lib"]
 
-mod emulator;
+mod cpu_emulator;
 mod memory;
 mod register;
