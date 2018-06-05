@@ -106,77 +106,77 @@ impl Register {
         return false;
     }
 
-    fn is_c_set(&self) -> bool {
+    pub fn is_c_set(&self) -> bool {
         if (CpuFlag::C as u8) & self.f != 0 {
             return true;
         }
         return false;
     }
 
-    fn is_h_set(&self) -> bool {
+    pub fn is_h_set(&self) -> bool {
         if (CpuFlag::H as u8) & self.f != 0 {
             return true;
         }
         return false;
     }
 
-    fn is_n_set(&self) -> bool {
+    pub fn is_n_set(&self) -> bool {
         if (CpuFlag::N as u8) & self.f != 0 {
             return true;
         }
         return false;
     }
 
-    fn is_z_set(&self) -> bool {
+    pub fn is_z_set(&self) -> bool {
         if (CpuFlag::Z as u8) & self.f != 0 {
             return true;
         }
         return false;
     }
 
-    fn set_c_flag(&mut self) {
+    pub fn set_c_flag(&mut self) {
         if !self.is_c_set() {
             self.f = (CpuFlag::C as u8) | self.f;
         }
     }
 
-    fn set_h_flag(&mut self) {
+    pub fn set_h_flag(&mut self) {
         if !self.is_h_set() {
             self.f = (CpuFlag::H as u8) | self.f;
         }
     }
 
-    fn set_n_flag(&mut self) {
+    pub fn set_n_flag(&mut self) {
         if !self.is_n_set() {
             self.f = (CpuFlag::N as u8) | self.f;
         }
     }
 
-    fn set_z_flag(&mut self) {
+    pub fn set_z_flag(&mut self) {
         if !self.is_z_set() {
             self.f = (CpuFlag::Z as u8) | self.f;
         }
     }
 
-    fn unset_c_flag(&mut self) {
+    pub fn unset_c_flag(&mut self) {
         if self.is_c_set() {
             self.f = (CpuFlag::C as u8) ^ self.f;
         }
     }
 
-    fn unset_h_flag(&mut self) {
+    pub fn unset_h_flag(&mut self) {
         if self.is_h_set() {
             self.f = (CpuFlag::H as u8) ^ self.f;
         }
     }
 
-    fn unset_n_flag(&mut self) {
+    pub fn unset_n_flag(&mut self) {
         if self.is_n_set() {
             self.f = (CpuFlag::N as u8) ^ self.f;
         }
     }
 
-    fn unset_z_flag(&mut self) {
+    pub fn unset_z_flag(&mut self) {
         if self.is_z_set() {
             self.f = (CpuFlag::Z as u8) ^ self.f;
         }

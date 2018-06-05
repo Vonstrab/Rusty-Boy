@@ -26,7 +26,7 @@ impl CpuEmulator {
         tmp
     }
 
-    pub fn exeucte_inst(&mut self) -> u16 {
+    pub fn execute_inst(&mut self) -> u16 {
         match self.get_next_byte() {
             //NOP
             0x00 => {
@@ -55,15 +55,27 @@ impl CpuEmulator {
                 self.reg.b += 1;
                 return 4;
             }
+            //DEC B
             0x05 => {
-                unimplemented!();
+                self.reg.b -= 1;
+                return 4;
             }
-
+            //LD B,d8
             0x06 => {
-                unimplemented!();
+                let tmp = self.get_next_byte();
+                self.reg.b = tmp;
+                return 8;
             }
+            //RLCA
             0x07 => {
-                unimplemented!();
+                let tmp = self.reg.a.rotate_left(1);
+                if tmp.trailing_zeros() == 0 {
+                    self.reg.set_c_flag();
+                } else {
+                    self.reg.unset_c_flag();
+                }
+                self.reg.a = tmp;
+                return 4;
             }
             0x08 => {
                 unimplemented!();
@@ -83,7 +95,7 @@ impl CpuEmulator {
             0x0D => {
                 unimplemented!();
             }
-            0x1E => {
+            0x0E => {
                 unimplemented!();
             }
             0x0F => {
