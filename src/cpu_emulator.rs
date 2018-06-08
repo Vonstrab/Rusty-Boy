@@ -6,6 +6,7 @@ pub struct CpuEmulator {
     pub mem: Memory,
     code: [u8; 64 * 1024],
     pc: u64,
+    sp: u16,
     filename: &'static str,
 }
 
@@ -16,6 +17,7 @@ impl CpuEmulator {
             mem: Memory::new(),
             code: [0; 64 * 1024],
             pc: 0,
+            sp: 0,
             filename: file,
         }
     }
@@ -62,8 +64,7 @@ impl CpuEmulator {
             }
             //LD B,d8
             0x06 => {
-                let tmp = self.get_next_byte();
-                self.reg.b = tmp;
+                self.reg.b = self.get_next_byte();
                 return 8;
             }
             //RLCA
@@ -77,29 +78,66 @@ impl CpuEmulator {
                 self.reg.a = tmp;
                 return 4;
             }
+            //LD (ad),SP
             0x08 => {
-                unimplemented!();
+                let la = (self.get_next_byte() as u16) << 8 | (self.get_next_byte() as u16);
+                self.mem.set_value16bit(la + 1, la, self.sp);
+                return 20;
             }
+            //ADD HL,BC
             0x09 => {
-                unimplemented!();
+                let tmp = self.reg.get_hl();
+                let add = tmp.overflowing_add(self.reg.get_bc());
+                match add {
+                    (x, true) => {
+                        self.reg.set_hl(x);
+                        self.reg.set_c_flag();
+                    }
+                    (x, _) => {
+                        self.reg.set_hl(x);
+                        self.reg.set_c_flag();
+                    }
+                }
+                self.reg.unset_n_flag();
+                return 8;
             }
+            //LD A,(BC)
             0x0A => {
-                unimplemented!();
+                self.reg.a = self.mem.get_value8bit(self.reg.get_bc());
+                return 8;
             }
+            //DEC BC
             0x0B => {
-                unimplemented!();
+                let tmp = self.reg.get_bc();
+                self.reg.set_bc(tmp - 1);
+                return 8;
             }
+            //INC C
             0x0C => {
-                unimplemented!();
+                self.reg.c += 1;
+                return 4;
             }
+            //DEC C
             0x0D => {
-                unimplemented!();
+                self.reg.c -= 1;
+                return 4;
             }
+            //LD C, d8
             0x0E => {
-                unimplemented!();
+                let tmp = self.get_next_byte();
+                self.reg.c = tmp;
+                return 8;
             }
+            //RRCA
             0x0F => {
-                unimplemented!();
+                let tmp = self.reg.a.rotate_right(1);
+                if tmp.leading_zeros() == 0 {
+                    self.reg.set_c_flag();
+                } else {
+                    self.reg.unset_c_flag();
+                }
+                self.reg.a = tmp;
+                return 4;
             }
             0x10 => {
                 unimplemented!();
