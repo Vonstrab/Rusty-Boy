@@ -5,9 +5,10 @@ pub struct CpuEmulator {
     pub reg: Register,
     pub mem: Memory,
     code: [u8; 64 * 1024],
-    pc: u64,
+    pc: i64,
     sp: u16,
     filename: &'static str,
+    stop: bool,
 }
 
 impl CpuEmulator {
@@ -19,6 +20,7 @@ impl CpuEmulator {
             pc: 0,
             sp: 0,
             filename: file,
+            stop: false,
         }
     }
 
@@ -55,11 +57,19 @@ impl CpuEmulator {
             //INC B
             0x04 => {
                 self.reg.b += 1;
+                if self.reg.b == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.unset_c_flag();
                 return 4;
             }
             //DEC B
             0x05 => {
                 self.reg.b -= 1;
+                if self.reg.b == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.set_c_flag();
                 return 4;
             }
             //LD B,d8
@@ -115,11 +125,19 @@ impl CpuEmulator {
             //INC C
             0x0C => {
                 self.reg.c += 1;
+                if self.reg.c == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.unset_c_flag();
                 return 4;
             }
             //DEC C
             0x0D => {
                 self.reg.c -= 1;
+                if self.reg.c == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.set_c_flag();
                 return 4;
             }
             //LD C, d8
@@ -139,54 +157,139 @@ impl CpuEmulator {
                 self.reg.a = tmp;
                 return 4;
             }
+            //STOP
             0x10 => {
-                unimplemented!();
+                self.stop = true;
+                self.get_next_byte();
+                return 4;
             }
+            //LD DE,d16
             0x11 => {
-                unimplemented!();
+                let tmp1 = self.get_next_byte();
+                let tmp2 = self.get_next_byte();
+                self.reg.set_de((tmp1 as u16) << 8 | (tmp2 as u16));
+                return 12;
             }
+            //LD (DE),A
             0x12 => {
-                unimplemented!();
+                self.mem.set_value8bit(self.reg.get_de(), self.reg.a);
+                return 8;
             }
+            //INC DE
             0x13 => {
+                let tmp = self.reg.get_bc();
+                self.reg.set_de(tmp + 1);
+                return 8;
                 unimplemented!();
             }
+            //INC D
             0x14 => {
-                unimplemented!();
+                self.reg.d += 1;
+                if self.reg.d == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.unset_c_flag();
+                return 4;
             }
+            //DEC D
             0x15 => {
-                unimplemented!();
+                self.reg.d -= 1;
+                if self.reg.d == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.unset_c_flag();
+                return 4;
             }
+            //LD D,d8
             0x16 => {
-                unimplemented!();
+                self.reg.d = self.get_next_byte();
+                return 8;
             }
+            //RLA
             0x017 => {
-                unimplemented!();
+                let mut tmp = self.reg.a << 1;
+                if self.reg.is_c_set() {
+                    tmp = tmp | 0x01;
+                }
+                if self.reg.a.leading_zeros() == 0 {
+                    self.reg.set_c_flag();
+                } else {
+                    self.reg.unset_c_flag();
+                }
+                self.reg.a = tmp;
+                return 4;
             }
+            //JR r8
             0x18 => {
-                unimplemented!();
+                let tmp = self.get_next_byte();
+                self.pc += (tmp as i64);
+                return 12;
             }
+            //ADD HL,DE
             0x19 => {
-                unimplemented!();
+                let tmp = self.reg.get_hl();
+                let add = tmp.overflowing_add(self.reg.get_de());
+                match add {
+                    (x, true) => {
+                        self.reg.set_hl(x);
+                        self.reg.set_c_flag();
+                    }
+                    (x, _) => {
+                        self.reg.set_hl(x);
+                        self.reg.set_c_flag();
+                    }
+                }
+                self.reg.unset_n_flag();
+                return 8;
             }
+            //LD A,(DE)
             0x1A => {
-                unimplemented!();
+                self.reg.a = self.mem.get_value8bit(self.reg.get_de());
+                return 8;
             }
-
+            //DEC DE
             0x1B => {
-                unimplemented!();
+                let tmp = self.reg.get_de();
+                self.reg.set_bc(tmp - 1);
+                return 8;
             }
+            //INC E
             0x1C => {
-                unimplemented!();
+                self.reg.e += 1;
+                if self.reg.e == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.unset_c_flag();
+                return 4;
             }
+            //DEC E
             0x1D => {
-                unimplemented!();
+                self.reg.e -= 1;
+                if self.reg.e == 0 {
+                    self.reg.set_z_flag();
+                }
+                self.reg.set_c_flag();
+                return 4;
             }
+            //LD E,d8
             0x1E => {
-                unimplemented!();
+                let tmp = self.get_next_byte();
+                self.reg.c = tmp;
+                return 8;
             }
+            //RRA
             0x1F => {
-                unimplemented!();
+                let mut tmp = self.reg.a >> 1;
+                if self.reg.is_c_set() {
+                    tmp = tmp | 0x80;
+                }
+                if self.reg.a.trailing_zeros() == 0 {
+                    self.reg.set_c_flag();
+                } else {
+                    self.reg.unset_c_flag();
+                }
+                self.reg.a = tmp;
+                return 4;
             }
             _ => panic!(format!("Instruction n°{} non couverte", self.pc)),
         }
