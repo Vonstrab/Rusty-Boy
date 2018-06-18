@@ -1,4 +1,3 @@
-use inst::*;
 use memory::*;
 use register::*;
 

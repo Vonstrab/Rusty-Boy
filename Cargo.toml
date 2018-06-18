@@ -3,4 +3,12 @@ name = "rusty-boy"
 version = "0.1.0"
 authors = ["Ivan Delgado : <delgado.ivan@protonmail.com>"]
 
+[lib]
+name = "rusty_boy_lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rusty_boy_bin"
+path = "src/main.rs"
+
 [dependencies]

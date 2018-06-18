@@ -260,6 +260,16 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
             cpu.reg.a = tmp;
             return 4;
         }
+        //JR NZ r8
+        0x20 => {
+            let tmp = cpu.get_next_byte();
+            if cpu.reg.is_z_set() {
+                return 12;
+            } else {
+                cpu.pc += tmp as i64;
+                return 8;
+            }
+        }
 
         _ => panic!(format!("Instruction n°{} non couverte", cpu.pc)),
     }
