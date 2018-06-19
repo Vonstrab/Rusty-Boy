@@ -29,17 +29,32 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
             cpu.reg.b += 1;
             if cpu.reg.b == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.unset_c_flag();
+            if cpu.reg.b.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+            cpu.reg.unset_n_flag();
             return 4;
         }
         //DEC B
         0x05 => {
+            if cpu.reg.b.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+
             cpu.reg.b -= 1;
             if cpu.reg.b == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.set_c_flag();
+            cpu.reg.set_n_flag();
             return 4;
         }
         //LD B,d8
@@ -66,8 +81,15 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
         }
         //ADD HL,BC
         0x09 => {
-            let tmp = cpu.reg.get_hl();
-            let add = tmp.overflowing_add(cpu.reg.get_bc());
+            let hl = cpu.reg.get_hl();
+            let bc = cpu.reg.get_bc();
+
+            if (bc ^ 0x0800) == 0 && (hl ^ 0x0800) == 0 {
+                cpu.reg.unset_h_flag();
+            } else {
+                cpu.reg.set_h_flag();
+            }
+            let add = hl.overflowing_add(bc);
             match add {
                 (x, true) => {
                     cpu.reg.set_hl(x);
@@ -95,19 +117,37 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
         //INC C
         0x0C => {
             cpu.reg.c += 1;
+
             if cpu.reg.c == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.unset_c_flag();
+
+            if cpu.reg.c.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+            cpu.reg.unset_n_flag();
             return 4;
         }
         //DEC C
         0x0D => {
+            if cpu.reg.c.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+
             cpu.reg.c -= 1;
+
             if cpu.reg.c == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.set_c_flag();
+            cpu.reg.set_n_flag();
             return 4;
         }
         //LD C, d8
@@ -156,17 +196,33 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
             cpu.reg.d += 1;
             if cpu.reg.d == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.unset_c_flag();
+            if cpu.reg.d.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+            cpu.reg.unset_n_flag();
             return 4;
         }
         //DEC D
         0x15 => {
-            cpu.reg.d -= 1;
+            if cpu.reg.d.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+
+            cpu.reg.d += 1;
+
             if cpu.reg.d == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.unset_c_flag();
+            cpu.reg.set_n_flag();
             return 4;
         }
         //LD D,d8
@@ -196,8 +252,15 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
         }
         //ADD HL,DE
         0x19 => {
-            let tmp = cpu.reg.get_hl();
-            let add = tmp.overflowing_add(cpu.reg.get_de());
+            let hl = cpu.reg.get_hl();
+            let de = cpu.reg.get_de();
+
+            if (de ^ 0x0800) == 0 && (hl ^ 0x0800) == 0 {
+                cpu.reg.unset_h_flag();
+            } else {
+                cpu.reg.set_h_flag();
+            }
+            let add = hl.overflowing_add(de);
             match add {
                 (x, true) => {
                     cpu.reg.set_hl(x);
@@ -225,19 +288,37 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
         //INC E
         0x1C => {
             cpu.reg.e += 1;
+
+            if cpu.reg.e.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+
             if cpu.reg.e == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.unset_c_flag();
+            cpu.reg.unset_n_flag();
             return 4;
         }
         //DEC E
         0x1D => {
-            cpu.reg.e -= 1;
+            if cpu.reg.e.trailing_zeros() >= 4 {
+                cpu.reg.set_h_flag();
+            } else {
+                cpu.reg.unset_h_flag();
+            }
+
+            cpu.reg.e += 1;
+
             if cpu.reg.e == 0 {
                 cpu.reg.set_z_flag();
+            } else {
+                cpu.reg.unset_z_flag();
             }
-            cpu.reg.set_c_flag();
+            cpu.reg.set_n_flag();
             return 4;
         }
         //LD E,d8
