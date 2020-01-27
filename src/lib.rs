@@ -4,3 +4,4 @@ pub mod cpu_emulator;
 pub mod inst;
 pub mod memory;
 pub mod register;
+pub mod utils;
