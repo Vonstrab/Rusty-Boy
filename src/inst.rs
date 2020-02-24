@@ -331,7 +331,7 @@ pub fn execute_inst(mut cpu: CpuEmulator) -> u16 {
         0x1F => {
             let mut tmp = cpu.reg.a >> 1;
             if cpu.reg.is_c_set() {
-                tmp = tmp | 0x80;
+                tmp |= 0x80;
             }
             if cpu.reg.a.trailing_zeros() == 0 {
                 cpu.reg.set_c_flag();

@@ -1,4 +1,4 @@
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone,Default)]
 pub struct Register {
     pub a: u8,
     f: u8,
@@ -14,10 +14,10 @@ pub struct Register {
 
 #[derive(Copy, Clone)]
 pub enum CpuFlag {
-    C = 0b00010000,
-    H = 0b00100000,
-    N = 0b01000000,
-    Z = 0b10000000,
+    C = 0b0001_0000,
+    H = 0b0010_0000,
+    N = 0b0100_0000,
+    Z = 0b1000_0000,
 }
 
 impl Register {
@@ -68,22 +68,22 @@ impl Register {
     }
 
     pub fn set_af(&mut self, af_value: u16) {
-        self.a = (af_value >> 8) as u8;;
+        self.a = (af_value >> 8) as u8;
         self.f = (af_value) as u8;
     }
 
     pub fn set_bc(&mut self, bc_value: u16) {
-        self.b = (bc_value >> 8) as u8;;
+        self.b = (bc_value >> 8) as u8;
         self.c = (bc_value) as u8;
     }
 
     pub fn set_de(&mut self, de_value: u16) {
-        self.d = (de_value >> 8) as u8;;
+        self.d = (de_value >> 8) as u8;
         self.e = (de_value) as u8;
     }
 
     pub fn set_hl(&mut self, hl_value: u16) {
-        self.h = (hl_value >> 8) as u8;;
+        self.h = (hl_value >> 8) as u8;
         self.l = (hl_value) as u8;
     }
 
@@ -103,82 +103,82 @@ impl Register {
         if (CpuFlag::Z as u8) & self.f != 0 {
             return true;
         }
-        return false;
+       false
     }
 
     pub fn is_c_set(&self) -> bool {
         if (CpuFlag::C as u8) & self.f != 0 {
             return true;
         }
-        return false;
+        false
     }
 
     pub fn is_h_set(&self) -> bool {
         if (CpuFlag::H as u8) & self.f != 0 {
             return true;
         }
-        return false;
+        false
     }
 
     pub fn is_n_set(&self) -> bool {
         if (CpuFlag::N as u8) & self.f != 0 {
             return true;
         }
-        return false;
+        false
     }
 
     pub fn is_z_set(&self) -> bool {
         if (CpuFlag::Z as u8) & self.f != 0 {
             return true;
         }
-        return false;
+       false
     }
 
     pub fn set_c_flag(&mut self) {
         if !self.is_c_set() {
-            self.f = (CpuFlag::C as u8) | self.f;
+            self.f ^= CpuFlag::C as u8;
         }
     }
 
     pub fn set_h_flag(&mut self) {
         if !self.is_h_set() {
-            self.f = (CpuFlag::H as u8) | self.f;
+            self.f ^= CpuFlag::H as u8;
         }
     }
 
     pub fn set_n_flag(&mut self) {
         if !self.is_n_set() {
-            self.f = (CpuFlag::N as u8) | self.f;
+            self.f ^= CpuFlag::N as u8;
         }
     }
 
     pub fn set_z_flag(&mut self) {
         if !self.is_z_set() {
-            self.f = (CpuFlag::Z as u8) | self.f;
+            self.f ^= CpuFlag::Z as u8;
         }
     }
 
     pub fn unset_c_flag(&mut self) {
         if self.is_c_set() {
-            self.f = (CpuFlag::C as u8) ^ self.f;
+            self.f ^= CpuFlag::C as u8;
         }
     }
 
     pub fn unset_h_flag(&mut self) {
         if self.is_h_set() {
-            self.f = (CpuFlag::H as u8) ^ self.f;
+            self.f ^= CpuFlag::H as u8 ;
         }
     }
 
     pub fn unset_n_flag(&mut self) {
         if self.is_n_set() {
-            self.f = (CpuFlag::N as u8) ^ self.f;
+            self.f ^= CpuFlag::N as u8 ;
         }
     }
 
     pub fn unset_z_flag(&mut self) {
         if self.is_z_set() {
-            self.f = (CpuFlag::Z as u8) ^ self.f;
+            self.f ^= CpuFlag::Z as u8;
         }
     }
 }
